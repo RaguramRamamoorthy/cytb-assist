@@ -62,17 +62,6 @@ def download_image(url):
     return Image.open(io.BytesIO(r.content)).convert("RGB")
 
 # -------------------------------------------------
-# HEADER
-# -------------------------------------------------
-# st.markdown(
-#     """
-#     <h2>Skin Test Reaction AI Reader</h2>
-#     <small>AI-assisted screening support</small>
-#     """,
-#     unsafe_allow_html=True
-# )
-
-# -------------------------------------------------
 # INPUT
 # -------------------------------------------------
 uploaded = st.file_uploader(
@@ -83,14 +72,12 @@ uploaded = st.file_uploader(
 run = uploaded is not None and st.button("Run analysis")
 
 # -------------------------------------------------
-# FIXED IMAGE SLOT (NO JUMPING)
+# SINGLE CANVAS (UI KEY)
 # -------------------------------------------------
-image_container = st.container()
-with image_container:
-    image_slot = st.empty()
+canvas = st.empty()
 
 # -------------------------------------------------
-# SESSION STATE (CORRECTLY HANDLED)
+# SESSION STATE
 # -------------------------------------------------
 if "image" not in st.session_state:
     st.session_state.image = None
@@ -99,22 +86,21 @@ if "last_uploaded_name" not in st.session_state:
     st.session_state.last_uploaded_name = None
 
 # -------------------------------------------------
-# PREVIEW (FIXED)
+# PREVIEW (NO LAG)
 # -------------------------------------------------
 if uploaded:
-    # Detect NEW upload and refresh image
     if uploaded.name != st.session_state.last_uploaded_name:
         st.session_state.image = Image.open(uploaded).convert("RGB")
         st.session_state.last_uploaded_name = uploaded.name
 
     if not run:
-        image_slot.image(
+        canvas.image(
             resize_for_display(st.session_state.image),
             caption="Original image"
         )
 
 # -------------------------------------------------
-# RUN PIPELINE
+# RUN PIPELINE (SEQUENTIAL UI)
 # -------------------------------------------------
 if run:
     image = st.session_state.image
@@ -123,16 +109,14 @@ if run:
     crop_deployment = replicate.deployments.get("serum4321/cropmodel")
     explain_deployment = replicate.deployments.get("serum4321/tbsiglip")
 
-    # STEP 1 — ORIGINAL
-    image_slot.image(
+    # ---- STATE 1: ORIGINAL ----
+    canvas.image(
         resize_for_display(image),
         caption="Original uploaded image"
     )
-    st.empty()
-    progress.progress(20)
-    time.sleep(0.1)
+    progress.progress(15)
 
-    # STEP 2 — CROP
+    # ---- STATE 2: CROP ----
     with st.spinner("Detecting reaction region..."):
         crop_pred = crop_deployment.predictions.create(
             input={"image": uploaded}
@@ -141,14 +125,13 @@ if run:
 
     cropped = download_image(crop_pred.output)
 
-    image_slot.image(
+    canvas.image(
         resize_for_display(cropped),
         caption="Detected reaction region"
     )
     progress.progress(45)
-    time.sleep(0.5)
 
-    # STEP 3 — ANALYSIS
+    # ---- STATE 3: HEATMAP ----
     with st.spinner("Analyzing reaction pattern..."):
         buf = io.BytesIO()
         cropped.save(buf, format="PNG")
@@ -162,22 +145,20 @@ if run:
     explain_out = explain_pred.output
     heatmap_img = download_image(explain_out["heatmap"])
 
-    image_slot.image(
+    canvas.image(
         resize_for_display(heatmap_img),
         caption="Model attention heatmap"
     )
-    progress.progress(70)
-    time.sleep(1.0)
+    progress.progress(75)
 
-    # STEP 4 — RESULT
-    image_slot.empty()
+    # ---- STATE 4: RESULT (SAME CANVAS) ----
+    canvas.empty()
 
     label = explain_out["metrics"]["label"]
     prob = explain_out["metrics"]["probability"]
-
     color = "#2ECC71" if label == "POSITIVE" else "#E74C3C"
 
-    st.markdown(
+    canvas.markdown(
         f"""
         <div style="
             background:#0f172a;
@@ -187,6 +168,7 @@ if run:
             border:1px solid #1e293b;
         ">
             <h2 style="color:{color};">{label}</h2>
+            <h4>Confidence: {prob:.1%}</h4>
             <small style="color:#94a3b8;">
             AI-assisted screening estimate
             </small>

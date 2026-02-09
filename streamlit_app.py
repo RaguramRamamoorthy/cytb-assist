@@ -66,7 +66,7 @@ def download_image(url):
 # -------------------------------------------------
 st.markdown(
     """
-    <h2>Skin Test <span style="color:#4A6FE3;">Reaction</span> AI Reader</h2>
+    <h2>Skin Test Reaction AI Reader</h2>
     <small>AI-assisted screening support</small>
     """,
     unsafe_allow_html=True

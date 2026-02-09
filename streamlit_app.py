@@ -19,6 +19,35 @@ st.set_page_config(
     layout="centered"
 )
 
+# -------------------------------------------------
+# SIDEBAR (LEFT TAB)
+# -------------------------------------------------
+with st.sidebar:
+    st.image(
+        "serum_institute_of_india_limited_logo.jpg",
+        use_container_width=True
+    )
+
+    st.markdown(
+        """
+        **Tuberculin Skin Test (Mantoux Test)**
+
+        This application assists in the visual interpretation of the
+        Tuberculin Skin Test, which is commonly used to screen for
+        exposure to *Mycobacterium tuberculosis*.
+
+        The tool provides an **AI-assisted estimate** of whether the
+        observed skin reaction is likely **negative or positive**,
+        supporting consistent screening and reducing
+        inter-observer variability.
+
+        ---
+        ⚠️ *For screening support only.  
+        Not a diagnostic device.*
+        """
+    )
+
+
 DISPLAY_HEIGHT = 350
 
 # -------------------------------------------------
@@ -37,39 +66,14 @@ def download_image(url):
 # -------------------------------------------------
 # HEADER
 # -------------------------------------------------
-left, right = st.columns([3, 1])
+st.markdown(
+    """
+    <h2>Skin Test <span style="color:#4A6FE3;">Reaction</span> AI Reader</h2>
+    <small>AI-assisted screening support</small>
+    """,
+    unsafe_allow_html=True
+)
 
-with left:
-    st.markdown(
-        """
-        <h2>Skin Test <span style="color:#4A6FE3;">Reaction</span> AI Reader</h2>
-        <small>AI-assisted screening support</small>
-        """,
-        unsafe_allow_html=True
-    )
-
-with right:
-    st.image(
-        "serum_institute_of_india_limited_logo.jpg",
-        use_container_width=True
-    )
-
-    st.markdown(
-        """
-        <small style="color:#555;">
-        This application assists in visual interpretation of the
-        <b>Tuberculin Skin Test (Mantoux test)</b>, which is commonly
-        used to screen for exposure to
-        <i>Mycobacterium tuberculosis</i>.
-        <br><br>
-        The tool provides an AI-assisted estimate of whether the
-        observed skin reaction is <b>likely negative or positive</b>,
-        supporting consistent screening and reducing
-        inter-observer variability.
-        </small>
-        """,
-        unsafe_allow_html=True
-    )
 # -------------------------------------------------
 # INPUT
 # -------------------------------------------------

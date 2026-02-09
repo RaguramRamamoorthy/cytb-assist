@@ -186,7 +186,6 @@ if run:
             border:1px solid #1e293b;
         ">
             <h2 style="color:{color};">{label}</h2>
-            <h4>Model confidence: {prob:.1%}</h4>
             <small style="color:#94a3b8;">
             AI-assisted screening estimate
             </small>

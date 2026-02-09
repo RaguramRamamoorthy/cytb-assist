@@ -128,8 +128,9 @@ if run:
         resize_for_display(image),
         caption="Original uploaded image"
     )
+    st.empty()
     progress.progress(20)
-    time.sleep(0.5)
+    time.sleep(0.1)
 
     # STEP 2 — CROP
     with st.spinner("Detecting reaction region..."):

@@ -152,6 +152,8 @@ if run:
     )
     progress.progress(75)
 
+    time.sleep(1.5)
+
     # ---- STATE 4: RESULT (SAME CANVAS) ----
     canvas.empty()
 

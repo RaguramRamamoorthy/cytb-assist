@@ -37,14 +37,39 @@ def download_image(url):
 # -------------------------------------------------
 # HEADER
 # -------------------------------------------------
-st.markdown(
-    """
-    <h2>Skin Test <span style="color:#4A6FE3;">Reaction</span> AI Reader</h2>
-    <small>AI-assisted screening support</small>
-    """,
-    unsafe_allow_html=True
-)
+left, right = st.columns([3, 1])
 
+with left:
+    st.markdown(
+        """
+        <h2>Skin Test <span style="color:#4A6FE3;">Reaction</span> AI Reader</h2>
+        <small>AI-assisted screening support</small>
+        """,
+        unsafe_allow_html=True
+    )
+
+with right:
+    st.image(
+        "serum_institute_of_india_limited_logo.jpg",
+        use_container_width=True
+    )
+
+    st.markdown(
+        """
+        <small style="color:#555;">
+        This application assists in visual interpretation of the
+        <b>Tuberculin Skin Test (Mantoux test)</b>, which is commonly
+        used to screen for exposure to
+        <i>Mycobacterium tuberculosis</i>.
+        <br><br>
+        The tool provides an AI-assisted estimate of whether the
+        observed skin reaction is <b>likely negative or positive</b>,
+        supporting consistent screening and reducing
+        inter-observer variability.
+        </small>
+        """,
+        unsafe_allow_html=True
+    )
 # -------------------------------------------------
 # INPUT
 # -------------------------------------------------

@@ -25,7 +25,7 @@ st.set_page_config(
 with st.sidebar:
     st.image(
         "serum_institute_of_india_limited_logo.jpg",
-        use_container_width=True
+        width=160
     )
 
     st.markdown(

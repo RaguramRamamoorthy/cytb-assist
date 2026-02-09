@@ -104,7 +104,7 @@ if uploaded:
 # -------------------------------------------------
 if run:
     image = st.session_state.image
-    progress = st.progress(0)
+
 
     crop_deployment = replicate.deployments.get("serum4321/cropmodel")
     explain_deployment = replicate.deployments.get("serum4321/tbsiglip")
@@ -114,6 +114,7 @@ if run:
         resize_for_display(image),
         caption="Original uploaded image"
     )
+    progress = st.progress(0)
     progress.progress(15)
 
     # ---- STATE 2: CROP ----
@@ -175,4 +176,3 @@ if run:
     )
 
     progress.progress(100)
-    st.caption("⚠️ AI-assisted screening support only. Not a diagnostic device.")

@@ -177,7 +177,6 @@ if run:
         f"""
         <div style="text-align:center; padding-top:30px;">
             <h2 style="color:{color};">{label}</h2>
-            <h4>Confidence: {prob:.2%}</h4>
         </div>
         """,
         unsafe_allow_html=True

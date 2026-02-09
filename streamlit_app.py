@@ -29,7 +29,7 @@ with st.sidebar:
     )
     st.image(
         "serum_institute_of_india_limited_logo.jpg",
-        width=80
+        width=160
     )
     st.markdown("</div>", unsafe_allow_html=True)
 

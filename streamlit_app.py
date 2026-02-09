@@ -23,18 +23,17 @@ st.set_page_config(
 # SIDEBAR (LEFT TAB)
 # -------------------------------------------------
 with st.sidebar:
-    st.image(
-        "serum_institute_of_india_limited_logo.jpg",
-        width=160
-    )
+    st.markdown("<div style='text-align:center; padding:12px 0;'>", unsafe_allow_html=True)
+    st.image("serum_institute_of_india_limited_logo.jpg", width=160)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(
         """
-        **Tuberculin Skin Test **
+        **Tuberculin Skin Test (Mantoux Test)**
 
         This application assists in the visual interpretation of the
-        Tuberculin Skin Test, which is commonly used to screen for
-        exposure to *Mycobacterium tuberculosis*.
+        tuberculin skin test, commonly used to screen for exposure to
+        *Mycobacterium tuberculosis*.
 
         The tool provides an **AI-assisted estimate** of whether the
         observed skin reaction is likely **negative or positive**,
@@ -46,7 +45,6 @@ with st.sidebar:
         Not a diagnostic device.*
         """
     )
-
 
 DISPLAY_HEIGHT = 350
 
@@ -85,30 +83,35 @@ uploaded = st.file_uploader(
 run = uploaded is not None and st.button("Run analysis")
 
 # -------------------------------------------------
-# FIXED LAYOUT ANCHOR (THIS IS THE KEY)
+# FIXED IMAGE SLOT (NO JUMPING)
 # -------------------------------------------------
 image_container = st.container()
-
 with image_container:
     image_slot = st.empty()
 
 # -------------------------------------------------
-# SESSION CACHE
+# SESSION STATE (CORRECTLY HANDLED)
 # -------------------------------------------------
 if "image" not in st.session_state:
     st.session_state.image = None
 
-# -------------------------------------------------
-# PREVIEW
-# -------------------------------------------------
-if uploaded and not run:
-    if st.session_state.image is None:
-        st.session_state.image = Image.open(uploaded).convert("RGB")
+if "last_uploaded_name" not in st.session_state:
+    st.session_state.last_uploaded_name = None
 
-    image_slot.image(
-        resize_for_display(st.session_state.image),
-        caption="Original image"
-    )
+# -------------------------------------------------
+# PREVIEW (FIXED)
+# -------------------------------------------------
+if uploaded:
+    # Detect NEW upload and refresh image
+    if uploaded.name != st.session_state.last_uploaded_name:
+        st.session_state.image = Image.open(uploaded).convert("RGB")
+        st.session_state.last_uploaded_name = uploaded.name
+
+    if not run:
+        image_slot.image(
+            resize_for_display(st.session_state.image),
+            caption="Original image"
+        )
 
 # -------------------------------------------------
 # RUN PIPELINE
@@ -120,7 +123,7 @@ if run:
     crop_deployment = replicate.deployments.get("serum4321/cropmodel")
     explain_deployment = replicate.deployments.get("serum4321/tbsiglip")
 
-    # STEP 1
+    # STEP 1 — ORIGINAL
     image_slot.image(
         resize_for_display(image),
         caption="Original uploaded image"
@@ -128,7 +131,7 @@ if run:
     progress.progress(20)
     time.sleep(0.5)
 
-    # STEP 2
+    # STEP 2 — CROP
     with st.spinner("Detecting reaction region..."):
         crop_pred = crop_deployment.predictions.create(
             input={"image": uploaded}
@@ -144,7 +147,7 @@ if run:
     progress.progress(45)
     time.sleep(0.5)
 
-    # STEP 3
+    # STEP 3 — ANALYSIS
     with st.spinner("Analyzing reaction pattern..."):
         buf = io.BytesIO()
         cropped.save(buf, format="PNG")
@@ -163,9 +166,9 @@ if run:
         caption="Model attention heatmap"
     )
     progress.progress(70)
-    time.sleep(3.0)
+    time.sleep(1.0)
 
-    # STEP 4
+    # STEP 4 — RESULT
     image_slot.empty()
 
     label = explain_out["metrics"]["label"]
@@ -175,8 +178,18 @@ if run:
 
     st.markdown(
         f"""
-        <div style="text-align:center; padding-top:30px;">
+        <div style="
+            background:#0f172a;
+            border-radius:12px;
+            padding:24px;
+            text-align:center;
+            border:1px solid #1e293b;
+        ">
             <h2 style="color:{color};">{label}</h2>
+            <h4>Model confidence: {prob:.1%}</h4>
+            <small style="color:#94a3b8;">
+            AI-assisted screening estimate
+            </small>
         </div>
         """,
         unsafe_allow_html=True

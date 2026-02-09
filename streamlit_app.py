@@ -23,17 +23,24 @@ st.set_page_config(
 # SIDEBAR (LEFT TAB)
 # -------------------------------------------------
 with st.sidebar:
+    # --- Centered logo ---
+    st.markdown(
+        "<div style='text-align:center; padding: 12px 0;'>",
+        unsafe_allow_html=True
+    )
     st.image(
         "serum_institute_of_india_limited_logo.jpg",
         width=160
     )
+    st.markdown("</div>", unsafe_allow_html=True)
 
+    # --- Text block (left-aligned, readable) ---
     st.markdown(
         """
         **Tuberculin Skin Test (Mantoux Test)**
 
         This application assists in the visual interpretation of the
-        Tuberculin Skin Test, which is commonly used to screen for
+        tuberculin skin test, which is commonly used to screen for
         exposure to *Mycobacterium tuberculosis*.
 
         The tool provides an **AI-assisted estimate** of whether the

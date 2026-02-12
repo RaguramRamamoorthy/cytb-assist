@@ -5,11 +5,14 @@ import requests
 import streamlit as st
 import replicate
 from PIL import Image
+import os
+print(os.getenv("REPLICATE_API_TOKEN"))
 
 # -------------------------------------------------
 # AUTH
 # -------------------------------------------------
-os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
+# os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
+
 
 # -------------------------------------------------
 # PAGE CONFIG
@@ -154,26 +157,54 @@ if run:
 
     time.sleep(1.5)
 
+    # -------------------------------------------------
+    # FINAL RESULT LOGIC
+    # -------------------------------------------------
+    metrics = explain_out.get("metrics", {})
+
+    prob = float(metrics.get("probability", 0))
+
+    # Probability → mm mapping
+    if prob < 0.50:
+        label = "NEGATIVE"
+        mm_text = "Less than 5 mm"
+        color = "#E74C3C"
+
+    elif 0.50 <= prob <= 0.60:
+        label = "BORDERLINE"
+        mm_text = "Between 5 mm and 7 mm"
+        color = "#F39C12"
+
+    else:
+        label = "POSITIVE"
+        mm_text = "Greater than 7 mm"
+        color = "#2ECC71"
+
     # ---- STATE 4: RESULT (SAME CANVAS) ----
     canvas.empty()
 
-    label = explain_out["metrics"]["label"]
-    prob = explain_out["metrics"]["probability"]
-    color = "#2ECC71" if label == "POSITIVE" else "#E74C3C"
+    # label = explain_out["metrics"]["label"]
+    # prob = explain_out["metrics"]["probability"]
+    # color = "#2ECC71" if label == "POSITIVE" else "#E74C3C"
 
     canvas.markdown(
         f"""
-        <div style="
-            background:#0f172a;
-            border-radius:12px;
-            padding:24px;
-            text-align:center;
-            border:1px solid #1e293b;
-        ">
-            <h2 style="color:{color};">{label}</h2>
-            </small>
-        </div>
-        """,
+           <div style="
+               background:#0f172a;
+               border-radius:12px;
+               padding:28px;
+               text-align:center;
+               border:1px solid #1e293b;
+           ">
+               <h2 style="color:{color}; margin-bottom:10px;">{label}</h2>
+               <p style="font-size:18px;">
+                   Estimated Induration Size: <b>{mm_text}</b>
+               </p>
+               <p style="font-size:14px; opacity:0.6;">
+                   Model Confidence: {prob * 100:.1f}%
+               </p>
+           </div>
+           """,
         unsafe_allow_html=True
     )
 

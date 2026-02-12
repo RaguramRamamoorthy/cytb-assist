@@ -200,9 +200,6 @@ if run:
                <p style="font-size:18px;">
                    Estimated Induration Size: <b>{mm_text}</b>
                </p>
-               <p style="font-size:14px; opacity:0.6;">
-                   Model Confidence: {prob * 100:.1f}%
-               </p>
            </div>
            """,
         unsafe_allow_html=True

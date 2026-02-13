@@ -40,8 +40,7 @@ with st.sidebar:
 
         The tool provides an **AI-assisted estimate** of whether the
         observed skin reaction is likely **negative or positive**,
-        supporting consistent screening and reducing
-        inter-observer variability.
+        supporting consistent screening.
 
         ---
         ⚠️ *For screening support only.  

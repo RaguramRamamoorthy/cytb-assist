@@ -197,9 +197,6 @@ if run:
                border:1px solid #1e293b;
            ">
                <h2 style="color:{color}; margin-bottom:10px;">{label}</h2>
-               <p style="font-size:18px;">
-                   Estimated Induration Size: <b>{mm_text}</b>
-               </p>
            </div>
            """,
         unsafe_allow_html=True

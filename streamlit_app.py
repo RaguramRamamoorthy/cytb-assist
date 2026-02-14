@@ -170,7 +170,7 @@ if run:
         advice = "Visible induration detected"
         color = "#2ECC71"
 
-    elif prob >= 0.40:
+    elif prob >= 0.41:
         label = "MANUAL CHECK REQUIRED"
         advice = "Visual features unclear — palpation recommended"
         color = "#F39C12"

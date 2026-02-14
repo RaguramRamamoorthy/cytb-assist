@@ -166,7 +166,7 @@ if run:
 
     # --- TRIAGE DECISION ---
     if prob >= 0.60:
-        label = "LIKELY Tb POSITIVE"
+        label = "POSITIVE"
         advice = "Visible induration detected"
         color = "#2ECC71"
 

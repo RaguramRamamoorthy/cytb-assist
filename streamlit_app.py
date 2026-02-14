@@ -163,21 +163,22 @@ if run:
 
     prob = float(metrics.get("probability", 0))
 
-    # Probability → mm mapping
-    if prob < 0.50:
-        label = "NEGATIVE"
-        mm_text = "Less than 5 mm"
-        color = "#E74C3C"
 
-    elif 0.50 <= prob <= 0.60:
-        label = "BORDERLINE"
-        mm_text = "Between 5 mm and 7 mm"
+    # --- TRIAGE DECISION ---
+    if prob >= 0.60:
+        label = "LIKELY Tb POSITIVE"
+        advice = "Visible induration detected"
+        color = "#2ECC71"
+
+    elif prob >= 0.40:
+        label = "MANUAL CHECK REQUIRED"
+        advice = "Visual features unclear — palpation recommended"
         color = "#F39C12"
 
     else:
-        label = "POSITIVE"
-        mm_text = "Greater than 7 mm"
-        color = "#2ECC71"
+        label = "NEGATIVE"
+        advice = "No visible induration detected"
+        color = "#E74C3C"
 
     # ---- STATE 4: RESULT (SAME CANVAS) ----
     canvas.empty()
@@ -188,16 +189,20 @@ if run:
 
     canvas.markdown(
         f"""
-           <div style="
-               background:#0f172a;
-               border-radius:12px;
-               padding:28px;
-               text-align:center;
-               border:1px solid #1e293b;
-           ">
-               <h2 style="color:{color}; margin-bottom:10px;">{label}</h2>
-           </div>
-           """,
+        <div style="
+            background:#0f172a;
+            border-radius:12px;
+            padding:28px;
+            text-align:center;
+            border:1px solid #1e293b;
+        ">
+            <h2 style="color:{color}; margin-bottom:10px;">{label}</h2>
+            <p style="color:#cbd5e1; font-size:16px;">{advice}</p>
+            <p style="color:#64748b; font-size:13px; margin-top:10px;">
+            AI screening support — clinical confirmation required
+            </p>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
